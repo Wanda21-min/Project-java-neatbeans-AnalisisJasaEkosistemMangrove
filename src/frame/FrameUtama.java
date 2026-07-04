@@ -1,15 +1,23 @@
 package frame;
 
-/*
-setTitle() agar judul jendela terisi.
-setSize() agar ukuran jendela proporsional.
+/**
+ * CLASS FRAMEUTAMA — Jendela utama aplikasi
+ * 
+ * PERBAIKAN dari versi sebelumnya:
+ * 1. setDefaultCloseOperation sebelumnya EXIT_ON_CLOSE (value=3) —
+ *    ini benar untuk frame utama, dipertahankan.
+ * 2. Ditambahkan setTitle() agar judul jendela terisi.
+ * 3. Ditambahkan setSize() agar ukuran jendela proporsional.
  */
 public class FrameUtama extends javax.swing.JFrame {
 
     public FrameUtama() {
         initComponents();
         this.setLocationRelativeTo(null);
+        // [PERBAIKAN 2] Judul jendela
         this.setTitle("Sistem Analisis Jasa Ekosistem Mangrove");
+        // [PERBAIKAN 3] Ukuran jendela yang proporsional
+        this.setSize(400, 300);
     }
 
     @SuppressWarnings("unchecked")
@@ -20,19 +28,19 @@ public class FrameUtama extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("form mangrove");
+        jButton1.setText("Form Mangrove");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 407, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 147, Short.MAX_VALUE)
+                    .addGap(0, 0, Short.MAX_VALUE)
                     .addComponent(jButton1)
-                    .addGap(0, 147, Short.MAX_VALUE)))
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -43,8 +51,6 @@ public class FrameUtama extends javax.swing.JFrame {
                     .addComponent(jButton1)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
-
-        jButton1.getAccessibleContext().setAccessibleName("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

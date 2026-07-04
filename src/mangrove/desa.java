@@ -1,21 +1,38 @@
 package mangrove;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.swing.JOptionPane;
 
+/*
+ * CLASS DESA — Superclass (class induk)
+ * Ditambahkan dua ArrayList baru untuk menampung
+ * kolom Jenis Jasa dan Bentuk Kegiatan dari Tabel 3 jurnal.
+ *   - dataJenisJasa      : menyimpan jenis jasa per baris tabel
+ *   - dataBentukKegiatan : menyimpan bentuk kegiatan per baris tabel
+ */
 public class desa {
+
+    // Locale eksplisit agar format Rupiah (titik ribuan,
+    // koma desimal) selalu konsisten di komputer manapun.
+    protected static final Locale LOCALE_ID = new Locale("in", "ID");
+
+    // ===== ATRIBUT PRIVATE =====
     private String namaDesa;
     private double tambakTradisional;
     private double tambakIntensif;
+
+    // ===== ARRAYLIST — penyimpanan data dinamis =====
     private ArrayList<String> dataDesa;
     private ArrayList<Double> dataTradisional;
     private ArrayList<Double> dataIntensif;
     private ArrayList<Double> dataTotalProduksi;
     private ArrayList<Double> dataNilaiJasa;
+    // [BARU] ArrayList untuk Jenis Jasa dan Bentuk Kegiatan (Tabel 3)
     private ArrayList<String> dataJenisJasa;
     private ArrayList<String> dataBentukKegiatan;
 
-    //CONSTRUCTOR 1 tanpa parameter
+    // ===== CONSTRUCTOR 1 — tanpa parameter =====
     public desa() {
         dataDesa           = new ArrayList<>();
         dataTradisional    = new ArrayList<>();
@@ -27,19 +44,22 @@ public class desa {
         dataBentukKegiatan = new ArrayList<>();
     }
 
-    //CONSTRUCTOR 2 dengan parameter
+    // ===== CONSTRUCTOR 2 — dengan parameter (overloading) =====
+    // Dengan memanggil this() di awal, semua ArrayList
+    // ikut diinisialisasi seperti pada constructor tanpa parameter.
     public desa(String namaDesa, double tambakTradisional, double tambakIntensif) {
+        this();
         this.namaDesa          = namaDesa;
         this.tambakTradisional = tambakTradisional;
         this.tambakIntensif    = tambakIntensif;
     }
 
-    //PENCARIAN INDEX
+    // ===== PENCARIAN INDEX =====
     public int getIndexData(String desa) {
         return dataDesa.indexOf(desa);
     }
 
-    //TAMPILKAN DETAIL DATA DESA
+    // ===== TAMPILKAN DETAIL DATA DESA =====
     public void cariDataDesa(String desa) {
         int i = getIndexData(desa);
         if (i >= 0) {
@@ -47,26 +67,27 @@ public class desa {
                 "Desa              : " + dataDesa.get(i)                                      + "\n" +
                 "Jenis Jasa        : " + dataJenisJasa.get(i)                                 + "\n" +
                 "Bentuk Kegiatan   : " + dataBentukKegiatan.get(i)                            + "\n" +
-                "Tambak Tradisional: Rp " + String.format("%,.0f", dataTradisional.get(i))    + "\n" +
-                "Tambak Intensif   : Rp " + String.format("%,.0f", dataIntensif.get(i))       + "\n" +
-                "Total Produksi    : Rp " + String.format("%,.0f", dataTotalProduksi.get(i))  + "\n" +
-                "Nilai Jasa        : Rp " + String.format("%,.2f", dataNilaiJasa.get(i));
+                "Tambak Tradisional: Rp " + String.format(LOCALE_ID, "%,.0f", dataTradisional.get(i))    + "\n" +
+                "Tambak Intensif   : Rp " + String.format(LOCALE_ID, "%,.0f", dataIntensif.get(i))       + "\n" +
+                "Total Produksi    : Rp " + String.format(LOCALE_ID, "%,.0f", dataTotalProduksi.get(i))  + "\n" +
+                "Nilai Jasa        : Rp " + String.format(LOCALE_ID, "%,.2f", dataNilaiJasa.get(i));
             JOptionPane.showMessageDialog(null, info, "Detail Data Desa", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Desa \"" + desa + "\" tidak ditemukan!");
         }
     }
 
-    //INPUT KE ARRAYLIST
+    // ===== INPUT KE ARRAYLIST =====
     public void inputDesa(String desa)               { dataDesa.add(desa); }
     public void inputTradisional(double nilai)       { dataTradisional.add(nilai); }
     public void inputIntensif(double nilai)          { dataIntensif.add(nilai); }
     public void inputTotalProduksi(double nilai)     { dataTotalProduksi.add(nilai); }
     public void inputNilaiJasa(double nilai)         { dataNilaiJasa.add(nilai); }
+    // [BARU] Input Jenis Jasa & Bentuk Kegiatan
     public void inputJenisJasa(String jenisJasa)         { dataJenisJasa.add(jenisJasa); }
     public void inputBentukKegiatan(String bentukKegiatan) { dataBentukKegiatan.add(bentukKegiatan); }
 
-    //HAPUS DATA BERDASARKAN INDEX
+    // ===== HAPUS DATA BERDASARKAN INDEX =====
     public void hapusData(int index) {
         if (index >= 0 && index < dataDesa.size()) {
             dataDesa.remove(index);
@@ -80,16 +101,17 @@ public class desa {
         }
     }
 
-    //GETTER ARRAYLIST
+    // ===== GETTER ARRAYLIST =====
     public ArrayList<String> arrayDesa()             { return dataDesa; }
     public ArrayList<Double> arrayTradisional()      { return dataTradisional; }
     public ArrayList<Double> arrayIntensif()         { return dataIntensif; }
     public ArrayList<Double> arrayTotalProduksi()    { return dataTotalProduksi; }
     public ArrayList<Double> arrayNilaiJasa()        { return dataNilaiJasa; }
+    // [BARU] Getter ArrayList Jenis Jasa & Bentuk Kegiatan
     public ArrayList<String> arrayJenisJasa()        { return dataJenisJasa; }
     public ArrayList<String> arrayBentukKegiatan()   { return dataBentukKegiatan; }
 
-    //SETTER & GETTER atribut tunggal
+    // ===== SETTER & GETTER atribut tunggal =====
     public void setNamaDesa(String namaDesa) {
         if (namaDesa != null && !namaDesa.isEmpty()) this.namaDesa = namaDesa;
     }

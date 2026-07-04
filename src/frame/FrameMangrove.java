@@ -3,10 +3,15 @@ package frame;
 import mangrove.JasaEkosistem;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+import java.util.Locale;
 
+/*CLASS FRAMEMANGROVE — Form utama analisis jasa ekosistem mangrove*/
 public class FrameMangrove extends javax.swing.JFrame {
 
     private JasaEkosistem obj;
+    // Locale eksplisit agar format Rupiah konsisten
+    // (titik ribuan, koma desimal) di komputer manapun aplikasi dijalankan.
+    private static final Locale LOCALE_ID = new Locale("in", "ID");
 
     public FrameMangrove() {
         initComponents();
@@ -15,20 +20,13 @@ public class FrameMangrove extends javax.swing.JFrame {
         obj = new JasaEkosistem();
         // Isi ComboBox Bentuk Kegiatan untuk desa awal (Pasarbanggi)
         updateCmbBentukKegiatan();
-        // Muat data awal dari Tabel 2 & Tabel 3 jurnal
-        muatDataAwal();
-        // Tampilkan ke Table
+        // Tampilkan ke JTable
         loadData();
     }
-
-    // Memuat data awal dari Tabel 2 & Tabel 3 jurnal.
-    public void muatDataAwal() {
-        simpanDataDesa("Pasarbanggi",  2316600000.0, 3430000000.0, "Penyedia Pangan");
-        simpanDataDesa("Tireman",       445500000.0, 6059666340.0, "Penyedia Pangan");
-        simpanDataDesa("Kabongan Lor",  222750000.0,          0.0, "Pemecah Gelombang");
-    }
-
-    // set data ke obj, hitung total & nilai, simpan ke semua ArrayList.
+    /*
+     * set data ke obj, hitung total & nilai, simpan ke semua ArrayList.
+     * bentukKegiatanDefault = bentuk kegiatan pertama yang ditampilkan di baris ini.
+     */
     private void simpanDataDesa(String nama, double tradisional,
                                  double intensif, String bentukKegiatan) {
         obj.setNamaDesa(nama);
@@ -43,10 +41,19 @@ public class FrameMangrove extends javax.swing.JFrame {
         obj.inputTradisional(tradisional);
         obj.inputIntensif(intensif);
         obj.inputTotalProduksi(obj.getTotalProduksi());
-        obj.inputNilaiJasa(obj.getNilaiJasa());
+        
+        // Gunakan getNilaiPerKegiatan() agar nilai jasa
+        // yang tersimpan sesuai bentuk kegiatan yang dipilih,
+        // bukan total semua kegiatan desa
+        obj.inputNilaiJasa(obj.getNilaiPerKegiatan(bentukKegiatan));
     }
 
-    // Merefresh Table dari ArrayList.
+    /*
+     * Merefresh JTable dari ArrayList.
+     * Kolom: Desa | Jenis Jasa | Bentuk Kegiatan |
+     *        Tambak Tradisional | Tambak Intensif |
+     *        Total Produksi | Nilai Jasa Ekosistem
+     */
     public void loadData() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
@@ -55,17 +62,16 @@ public class FrameMangrove extends javax.swing.JFrame {
                 obj.arrayDesa().get(i),
                 obj.arrayJenisJasa().get(i),
                 obj.arrayBentukKegiatan().get(i),
-                "Rp " + String.format("%,.0f", obj.arrayTradisional().get(i)),
-                "Rp " + String.format("%,.0f", obj.arrayIntensif().get(i)),
-                "Rp " + String.format("%,.0f", obj.arrayTotalProduksi().get(i)),
-                "Rp " + String.format("%,.2f", obj.arrayNilaiJasa().get(i))
+                "Rp " + String.format(LOCALE_ID, "%,.0f", obj.arrayTradisional().get(i)),
+                "Rp " + String.format(LOCALE_ID, "%,.0f", obj.arrayIntensif().get(i)),
+                "Rp " + String.format(LOCALE_ID, "%,.0f", obj.arrayTotalProduksi().get(i)),
+                "Rp " + String.format(LOCALE_ID, "%,.2f", obj.arrayNilaiJasa().get(i))
             });
         }
     }
 
-    /*
-     Memperbarui isi ComboBox Bentuk Kegiatan
-     sesuai desa yang sedang dipilih di ComboBox.
+    /* Memperbarui isi ComboBox Bentuk Kegiatan
+     * sesuai desa yang sedang dipilih di jComboBox1.
      */
     private void updateCmbBentukKegiatan() {
         String desaDipilih = jComboBox1.getSelectedItem().toString();
@@ -77,10 +83,9 @@ public class FrameMangrove extends javax.swing.JFrame {
         updateJenisJasaDanNilai();
     }
 
-    /*
-    Mengisi lblJenisJasaValue secara otomatis
-    berdasarkan desa + bentuk kegiatan yang dipilih.
-    */
+    /* Mengisi lblJenisJasaValue dan jTextField5 secara otomatis
+     * berdasarkan desa + bentuk kegiatan yang dipilih.
+     */
     private void updateJenisJasaDanNilai() {
         String desa    = jComboBox1.getSelectedItem().toString();
         String kegiatan = cmbBentukKegiatan.getSelectedItem() != null
@@ -91,7 +96,7 @@ public class FrameMangrove extends javax.swing.JFrame {
         lblJenisJasaValue.setText(jenis);
         // Isi Nilai Jasa Kegiatan otomatis (read-only)
         double nilaiKegiatan = obj.getNilaiPerKegiatan(kegiatan);
-        jTextField5.setText(String.format("%,.2f", nilaiKegiatan));
+        jTextField5.setText(String.format(LOCALE_ID, "%,.2f", nilaiKegiatan));
     }
 
     @SuppressWarnings("unchecked")
@@ -197,8 +202,8 @@ public class FrameMangrove extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setRowHeight(22);
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jTable1.setRowHeight(22);
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setPreferredWidth(100);
@@ -217,13 +222,7 @@ public class FrameMangrove extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(btnKeluar))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(20, 20, 20)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,18 +251,27 @@ public class FrameMangrove extends javax.swing.JFrame {
                                         .addGap(10, 10, 10)
                                         .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblNilaiJasaKegiatan, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btnHapus))
-                                .addGap(10, 10, 10)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(20, 20, 20)
+                                        .addComponent(lblNilaiJasaKegiatan, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(10, 10, 10))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(btnKeluar)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnHapus)
+                                        .addGap(74, 74, 74)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(btnTambah)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(btnProses))
                                     .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 276, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -297,45 +305,38 @@ public class FrameMangrove extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNilaiJasaKegiatan)
                     .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnTambah)
-                    .addComponent(btnProses)
-                    .addComponent(btnHapus))
-                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnTambah)
+                            .addComponent(btnProses)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnKeluar)
+                            .addComponent(btnHapus))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnKeluar)
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // ============================================================
+    // EVENT HANDLERS
+    // ============================================================
+
     /*
-    Saat desa di-ComboBox diganti:
-    1. Update isi ComboBox Bentuk Kegiatan sesuai desa
-    2. Isi otomatis Tambak Tradisional & Intensif (Tabel 2)
+     * Saat desa di-ComboBox diganti:
+     * 1. Update isi ComboBox Bentuk Kegiatan sesuai desa
+     * 2. Isi otomatis Tambak Tradisional & Intensif (Tabel 2)
      */
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // Update ComboBox Bentuk Kegiatan
         updateCmbBentukKegiatan();
-        // Auto-isi Tradisional & Intensif dari Tabel 2
-        String dipilih = jComboBox1.getSelectedItem().toString();
-        switch (dipilih) {
-            case "Pasarbanggi":
-                jTextField2.setText("2316600000");
-                jTextField3.setText("3430000000");
-                break;
-            case "Tireman":
-                jTextField2.setText("445500000");
-                jTextField3.setText("6059666340");
-                break;
-            case "Kabongan Lor":
-                jTextField2.setText("222750000");
-                jTextField3.setText("0");
-                break;
-        }
+  
         // Bersihkan field Total Produksi saat ganti desa
         jTextField4.setText("");
     }//GEN-LAST:event_jComboBox1ActionPerformed
@@ -351,10 +352,10 @@ public class FrameMangrove extends javax.swing.JFrame {
     /*
      * Tombol Proses:
      * Menghitung Total Produksi dan menampilkan rincian
-     * lengkap Tabel 3 di JOptionPane.
      */
     private void btnProsesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProsesActionPerformed
         try {
+            // Validasi field tidak boleh kosong
             if (jTextField2.getText().trim().isEmpty()
                     || jTextField3.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
@@ -362,41 +363,50 @@ public class FrameMangrove extends javax.swing.JFrame {
                     "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            String desa     = jComboBox1.getSelectedItem().toString();
-            String kegiatan = cmbBentukKegiatan.getSelectedItem().toString();
+
+            // Ambil data dari form
+            String desa      = jComboBox1.getSelectedItem().toString();
+            String kegiatan  = cmbBentukKegiatan.getSelectedItem().toString();
             double tradisional = Double.parseDouble(jTextField2.getText().trim());
             double intensif    = Double.parseDouble(jTextField3.getText().trim());
 
+            // Set ke objek agar method perhitungan bisa berjalan
             obj.setNamaDesa(desa);
             obj.setTambakTradisional(tradisional);
             obj.setTambakIntensif(intensif);
 
-            double totalProduksi  = obj.getTotalProduksi();
-            double nilaiJasaTotal = obj.getNilaiJasa();
-            double nilaiKegiatan  = obj.getNilaiPerKegiatan(kegiatan);
-            String jenisJasa      = obj.getJenisJasa(kegiatan);
+            // Hitung nilai yang dibutuhkan
+            double totalProduksi = obj.getTotalProduksi();
+            // nilaiKegiatan = nilai SPESIFIK kegiatan yang dipilih (dari Tabel 3)
+            double nilaiKegiatan = obj.getNilaiPerKegiatan(kegiatan);
+            String jenisJasa     = obj.getJenisJasa(kegiatan);
 
-            // Tampilkan Total Produksi di field
-            jTextField4.setText(String.format("%,.0f", totalProduksi));
+            // Tampilkan Total Produksi di field (read-only)
+            jTextField4.setText(String.format(LOCALE_ID, "%,.0f", totalProduksi));
+            // Tampilkan Nilai Jasa kegiatan yang dipilih di field (read-only)
+            jTextField5.setText(String.format(LOCALE_ID, "%,.2f", nilaiKegiatan));
 
-            // hasil rincian lengkap
+            // Dialog menampilkan hasil sesuai kegiatan yang dipilih
+            // Tidak lagi menampilkan TOTAL semua kegiatan agar tidak membingungkan
             JOptionPane.showMessageDialog(this,
-                "Desa             : " + desa + "\n" +
+                "╔══════════════════════════════════════╗\n" +
+                "    HASIL PROSES — TABEL 3 JURNAL \n" +
+                "╚══════════════════════════════════════╝\n\n" +
+                "Desa             : " + desa      + "\n" +
                 "Jenis Jasa       : " + jenisJasa + "\n" +
-                "Bentuk Kegiatan  : " + kegiatan + "\n" +
+                "Bentuk Kegiatan  : " + kegiatan  + "\n" +
                 "──────────────────────────────────────\n" +
-                "Tambak Tradisional : Rp " +
-                    String.format("%,.0f", tradisional) + "\n" +
-                "Tambak Intensif    : Rp " +
-                    String.format("%,.0f", intensif) + "\n" +
-                "Total Produksi     : Rp " +
-                    String.format("%,.0f", totalProduksi) + "\n" +
-                "──────────────────────────────────────\n"+
-                "Nilai Jasa (" + kegiatan + "):\n"+
-                "  Rp " + String.format("%,.2f", nilaiKegiatan)+ "\n\n" +
-                "TOTAL Nilai Jasa Ekosistem:\n"+
-                "  Rp " + String.format("%,.2f", nilaiJasaTotal),
-                "Hasil Proses — " + desa,
+                "Tambak Tradisional : Rp "                     +
+                    String.format(LOCALE_ID, "%,.0f", tradisional)  + "\n"+
+                "Tambak Intensif    : Rp "                     +
+                    String.format(LOCALE_ID, "%,.0f", intensif)     + "\n"+
+                "Total Produksi     : Rp "                     +
+                    String.format(LOCALE_ID, "%,.0f", totalProduksi)+ "\n"+
+                "──────────────────────────────────────\n"     +
+                "Nilai Jasa Ekosistem\n"                       +
+                "(" + jenisJasa + " - " + kegiatan + ") :\n"  +
+                "Rp " + String.format(LOCALE_ID, "%,.2f", nilaiKegiatan),
+                "Hasil Proses — " + desa + " | " + kegiatan,
                 JOptionPane.INFORMATION_MESSAGE);
 
         } catch (NumberFormatException e) {
@@ -406,7 +416,7 @@ public class FrameMangrove extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnProsesActionPerformed
 
-    /*
+    /* Tombol Tambah:
      * Menyimpan data dari form ke ArrayList dan merefresh tabel.
      */
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
@@ -439,7 +449,8 @@ public class FrameMangrove extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnTambahActionPerformed
 
-    // menghapus baris yang dipilih di tabel
+    /* Tombol Hapus: menghapus baris yang dipilih di tabel.
+     */
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         int barisPilih = jTable1.getSelectedRow();
         if (barisPilih < 0) {
@@ -458,7 +469,8 @@ public class FrameMangrove extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
-    // tutup form ini saja
+    /*Tombol Keluar: tutup form ini saja (DISPOSE, bukan EXIT).
+     */
     private void btnKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKeluarActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnKeluarActionPerformed
