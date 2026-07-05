@@ -24,16 +24,16 @@ public class FrameMangrove extends javax.swing.JFrame {
         loadData();
     }
     /*
-     * set data ke obj, hitung total & nilai, simpan ke semua ArrayList.
-     * bentukKegiatanDefault = bentuk kegiatan pertama yang ditampilkan di baris ini.
+     * set data ke obj, hitung total, simpan ke semua ArrayList.
+     * jenisJasa dan nilaiJasa sekarang diisi manual oleh pengguna
+     * (tidak lagi dihitung otomatis dari bentukKegiatan).
      */
     private void simpanDataDesa(String nama, double tradisional,
-                                 double intensif, String bentukKegiatan) {
+                                 double intensif, String bentukKegiatan,
+                                 String jenisJasa, double nilaiJasa) {
         obj.setNamaDesa(nama);
         obj.setTambakTradisional(tradisional);
         obj.setTambakIntensif(intensif);
-
-        String jenisJasa = obj.getJenisJasa(bentukKegiatan);
 
         obj.inputDesa(nama);
         obj.inputJenisJasa(jenisJasa);
@@ -41,11 +41,7 @@ public class FrameMangrove extends javax.swing.JFrame {
         obj.inputTradisional(tradisional);
         obj.inputIntensif(intensif);
         obj.inputTotalProduksi(obj.getTotalProduksi());
-        
-        // Gunakan getNilaiPerKegiatan() agar nilai jasa
-        // yang tersimpan sesuai bentuk kegiatan yang dipilih,
-        // bukan total semua kegiatan desa
-        obj.inputNilaiJasa(obj.getNilaiPerKegiatan(bentukKegiatan));
+        obj.inputNilaiJasa(nilaiJasa);
     }
 
     /*
@@ -79,24 +75,6 @@ public class FrameMangrove extends javax.swing.JFrame {
         String[] daftarKegiatan = obj.getBentukKegiatanList();
         cmbBentukKegiatan.setModel(
             new javax.swing.DefaultComboBoxModel<>(daftarKegiatan));
-        // Trigger update Jenis Jasa & Nilai Jasa otomatis
-        updateJenisJasaDanNilai();
-    }
-
-    /* Mengisi lblJenisJasaValue dan jTextField5 secara otomatis
-     * berdasarkan desa + bentuk kegiatan yang dipilih.
-     */
-    private void updateJenisJasaDanNilai() {
-        String desa    = jComboBox1.getSelectedItem().toString();
-        String kegiatan = cmbBentukKegiatan.getSelectedItem() != null
-                         ? cmbBentukKegiatan.getSelectedItem().toString() : "";
-        obj.setNamaDesa(desa);
-        // Isi Jenis Jasa otomatis
-        String jenis = obj.getJenisJasa(kegiatan);
-        lblJenisJasaValue.setText(jenis);
-        // Isi Nilai Jasa Kegiatan otomatis (read-only)
-        double nilaiKegiatan = obj.getNilaiPerKegiatan(kegiatan);
-        jTextField5.setText(String.format(LOCALE_ID, "%,.2f", nilaiKegiatan));
     }
 
     @SuppressWarnings("unchecked")
@@ -108,7 +86,7 @@ public class FrameMangrove extends javax.swing.JFrame {
         lblBentukKegiatan = new javax.swing.JLabel();
         cmbBentukKegiatan = new javax.swing.JComboBox<>();
         lblJenisJasa = new javax.swing.JLabel();
-        lblJenisJasaValue = new javax.swing.JLabel();
+        cmbJenisJasa = new javax.swing.JComboBox<>();
         lblTradisional = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
         lblIntensif = new javax.swing.JLabel();
@@ -144,8 +122,8 @@ public class FrameMangrove extends javax.swing.JFrame {
         lblJenisJasa.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblJenisJasa.setText("Jenis Jasa");
 
-        lblJenisJasaValue.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        lblJenisJasaValue.setText("-");
+        cmbJenisJasa.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        cmbJenisJasa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Jasa Produksi", "Jasa Penyedia", "Jasa Pengatur", "Jasa Budaya" }));
 
         lblTradisional.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblTradisional.setText("Tambak Tradisional (Rp)");
@@ -166,7 +144,6 @@ public class FrameMangrove extends javax.swing.JFrame {
         lblNilaiJasaKegiatan.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
         lblNilaiJasaKegiatan.setText("Nilai Jasa Ekosistem (Rp)");
 
-        jTextField5.setEditable(false);
         jTextField5.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
 
         btnTambah.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -237,7 +214,7 @@ public class FrameMangrove extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(lblJenisJasa, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(10, 10, 10)
-                                        .addComponent(lblJenisJasaValue, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(cmbJenisJasa, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(lblTradisional, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(10, 10, 10)
@@ -288,7 +265,7 @@ public class FrameMangrove extends javax.swing.JFrame {
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblJenisJasa)
-                    .addComponent(lblJenisJasaValue))
+                    .addComponent(cmbJenisJasa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTradisional)
@@ -337,16 +314,17 @@ public class FrameMangrove extends javax.swing.JFrame {
         // Update ComboBox Bentuk Kegiatan
         updateCmbBentukKegiatan();
   
-        // Bersihkan field Total Produksi saat ganti desa
+        // Bersihkan field Total Produksi & Nilai Jasa saat ganti desa
         jTextField4.setText("");
+        jTextField5.setText("");
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /*
-     * Saat Bentuk Kegiatan diganti:
-     * Update Jenis Jasa dan Nilai Jasa Ekosistem secara otomatis.
+     * Saat Bentuk Kegiatan diganti.
+     * Jenis Jasa dan Nilai Jasa Ekosistem sekarang diisi manual
+     * oleh pengguna sendiri (tidak ada lagi auto-isi di sini).
      */
     private void cmbBentukKegiatanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbBentukKegiatanActionPerformed
-        updateJenisJasaDanNilai();
     }//GEN-LAST:event_cmbBentukKegiatanActionPerformed
 
     /*
@@ -365,8 +343,10 @@ public class FrameMangrove extends javax.swing.JFrame {
             }
 
             // Ambil data dari form
-            String desa      = jComboBox1.getSelectedItem().toString();
-            String kegiatan  = cmbBentukKegiatan.getSelectedItem().toString();
+            String desa       = jComboBox1.getSelectedItem().toString();
+            String kegiatan    = cmbBentukKegiatan.getSelectedItem().toString();
+            // Jenis Jasa sekarang dipilih manual oleh pengguna
+            String jenisJasa   = cmbJenisJasa.getSelectedItem().toString();
             double tradisional = Double.parseDouble(jTextField2.getText().trim());
             double intensif    = Double.parseDouble(jTextField3.getText().trim());
 
@@ -375,19 +355,17 @@ public class FrameMangrove extends javax.swing.JFrame {
             obj.setTambakTradisional(tradisional);
             obj.setTambakIntensif(intensif);
 
-            // Hitung nilai yang dibutuhkan
+            // Total Produksi tetap dihitung otomatis (Tradisional + Intensif)
             double totalProduksi = obj.getTotalProduksi();
-            // nilaiKegiatan = nilai SPESIFIK kegiatan yang dipilih (dari Tabel 3)
-            double nilaiKegiatan = obj.getNilaiPerKegiatan(kegiatan);
-            String jenisJasa     = obj.getJenisJasa(kegiatan);
-
-            // Tampilkan Total Produksi di field (read-only)
             jTextField4.setText(String.format(LOCALE_ID, "%,.0f", totalProduksi));
-            // Tampilkan Nilai Jasa kegiatan yang dipilih di field (read-only)
-            jTextField5.setText(String.format(LOCALE_ID, "%,.2f", nilaiKegiatan));
 
-            // Dialog menampilkan hasil sesuai kegiatan yang dipilih
-            // Tidak lagi menampilkan TOTAL semua kegiatan agar tidak membingungkan
+            // Nilai Jasa Ekosistem sekarang diisi manual oleh pengguna sendiri
+            String nilaiJasaTeks   = jTextField5.getText().trim();
+            String nilaiJasaTampil = nilaiJasaTeks.isEmpty()
+                ? "(belum diisi)"
+                : "Rp " + nilaiJasaTeks;
+
+            // Dialog menampilkan rincian sesuai kegiatan yang dipilih
             JOptionPane.showMessageDialog(this,
                 "╔══════════════════════════════════════╗\n" +
                 "    HASIL PROSES — TABEL 3 JURNAL \n" +
@@ -405,7 +383,7 @@ public class FrameMangrove extends javax.swing.JFrame {
                 "──────────────────────────────────────\n"     +
                 "Nilai Jasa Ekosistem\n"                       +
                 "(" + jenisJasa + " - " + kegiatan + ") :\n"  +
-                "Rp " + String.format(LOCALE_ID, "%,.2f", nilaiKegiatan),
+                nilaiJasaTampil,
                 "Hasil Proses — " + desa + " | " + kegiatan,
                 JOptionPane.INFORMATION_MESSAGE);
 
@@ -422,21 +400,27 @@ public class FrameMangrove extends javax.swing.JFrame {
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         try {
             if (jTextField2.getText().trim().isEmpty()
-                    || jTextField3.getText().trim().isEmpty()) {
+                    || jTextField3.getText().trim().isEmpty()
+                    || jTextField5.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this,
-                    "Field Tambak Tradisional dan Intensif harus diisi!",
+                    "Field Tambak Tradisional, Tambak Intensif, dan Nilai Jasa Ekosistem harus diisi!",
                     "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             String nama        = jComboBox1.getSelectedItem().toString();
             String kegiatan    = cmbBentukKegiatan.getSelectedItem().toString();
+            // Jenis Jasa dipilih manual oleh pengguna
+            String jenisJasa   = cmbJenisJasa.getSelectedItem().toString();
             double tradisional = Double.parseDouble(jTextField2.getText().trim());
             double intensif    = Double.parseDouble(jTextField3.getText().trim());
+            // Nilai Jasa Ekosistem diketik manual oleh pengguna
+            double nilaiJasa   = Double.parseDouble(jTextField5.getText().trim());
 
-            simpanDataDesa(nama, tradisional, intensif, kegiatan);
+            simpanDataDesa(nama, tradisional, intensif, kegiatan, jenisJasa, nilaiJasa);
             loadData();
 
             jTextField4.setText("");
+            jTextField5.setText("");
             JOptionPane.showMessageDialog(this,
                 "Data berhasil ditambahkan!\n" +
                 "Desa: " + nama + " | " + kegiatan,
@@ -485,6 +469,7 @@ public class FrameMangrove extends javax.swing.JFrame {
     private javax.swing.JButton btnProses;
     private javax.swing.JButton btnTambah;
     private javax.swing.JComboBox<String> cmbBentukKegiatan;
+    private javax.swing.JComboBox<String> cmbJenisJasa;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
@@ -496,7 +481,6 @@ public class FrameMangrove extends javax.swing.JFrame {
     private javax.swing.JLabel lblDesa;
     private javax.swing.JLabel lblIntensif;
     private javax.swing.JLabel lblJenisJasa;
-    private javax.swing.JLabel lblJenisJasaValue;
     private javax.swing.JLabel lblNilaiJasaKegiatan;
     private javax.swing.JLabel lblTotalProduksi;
     private javax.swing.JLabel lblTradisional;
