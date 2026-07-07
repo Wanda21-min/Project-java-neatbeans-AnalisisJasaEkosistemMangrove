@@ -1,22 +1,14 @@
 package frame;
 
-/**
- * CLASS FRAMEUTAMA — Jendela utama aplikasi
- * 
- * PERBAIKAN dari versi sebelumnya:
- * 1. setDefaultCloseOperation sebelumnya EXIT_ON_CLOSE (value=3) —
- *    ini benar untuk frame utama, dipertahankan.
- * 2. Ditambahkan setTitle() agar judul jendela terisi.
- * 3. Ditambahkan setSize() agar ukuran jendela proporsional.
- */
+/* CLASS FRAMEUTAMA — Jendela utama aplikasi */
 public class FrameUtama extends javax.swing.JFrame {
 
     public FrameUtama() {
         initComponents();
         this.setLocationRelativeTo(null);
-        // [PERBAIKAN 2] Judul jendela
+        //Judul jendela
         this.setTitle("Sistem Analisis Jasa Ekosistem Mangrove");
-        // [PERBAIKAN 3] Ukuran jendela yang proporsional
+        // Ukuran saat membuka framenya
         this.setSize(400, 300);
     }
 

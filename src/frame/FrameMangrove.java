@@ -9,6 +9,7 @@ import java.util.Locale;
 public class FrameMangrove extends javax.swing.JFrame {
 
     private JasaEkosistem obj;
+    
     // Locale eksplisit agar format Rupiah konsisten
     // (titik ribuan, koma desimal) di komputer manapun aplikasi dijalankan.
     private static final Locale LOCALE_ID = new Locale("in", "ID");
@@ -18,16 +19,13 @@ public class FrameMangrove extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setTitle("Form Analisis Jasa Ekosistem Mangrove");
         obj = new JasaEkosistem();
+        
         // Isi ComboBox Bentuk Kegiatan untuk desa awal (Pasarbanggi)
         updateCmbBentukKegiatan();
         // Tampilkan ke JTable
         loadData();
     }
-    /*
-     * set data ke obj, hitung total, simpan ke semua ArrayList.
-     * jenisJasa dan nilaiJasa sekarang diisi manual oleh pengguna
-     * (tidak lagi dihitung otomatis dari bentukKegiatan).
-     */
+    /* set data ke obj, hitung total, simpan ke semua ArrayList. */
     private void simpanDataDesa(String nama, double tradisional,
                                  double intensif, String bentukKegiatan,
                                  String jenisJasa, double nilaiJasa) {
@@ -44,12 +42,7 @@ public class FrameMangrove extends javax.swing.JFrame {
         obj.inputNilaiJasa(nilaiJasa);
     }
 
-    /*
-     * Merefresh JTable dari ArrayList.
-     * Kolom: Desa | Jenis Jasa | Bentuk Kegiatan |
-     *        Tambak Tradisional | Tambak Intensif |
-     *        Total Produksi | Nilai Jasa Ekosistem
-     */
+    /* Merefresh JTable dari ArrayList. */
     public void loadData() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
@@ -319,11 +312,6 @@ public class FrameMangrove extends javax.swing.JFrame {
         jTextField5.setText("");
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
-    /*
-     * Saat Bentuk Kegiatan diganti.
-     * Jenis Jasa dan Nilai Jasa Ekosistem sekarang diisi manual
-     * oleh pengguna sendiri (tidak ada lagi auto-isi di sini).
-     */
     private void cmbBentukKegiatanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbBentukKegiatanActionPerformed
     }//GEN-LAST:event_cmbBentukKegiatanActionPerformed
 
@@ -345,6 +333,7 @@ public class FrameMangrove extends javax.swing.JFrame {
             // Ambil data dari form
             String desa       = jComboBox1.getSelectedItem().toString();
             String kegiatan    = cmbBentukKegiatan.getSelectedItem().toString();
+            
             // Jenis Jasa sekarang dipilih manual oleh pengguna
             String jenisJasa   = cmbJenisJasa.getSelectedItem().toString();
             double tradisional = Double.parseDouble(jTextField2.getText().trim());
@@ -355,20 +344,19 @@ public class FrameMangrove extends javax.swing.JFrame {
             obj.setTambakTradisional(tradisional);
             obj.setTambakIntensif(intensif);
 
-            // Total Produksi tetap dihitung otomatis (Tradisional + Intensif)
+            // Total Produksi dihitung otomatis (Tradisional + Intensif)
             double totalProduksi = obj.getTotalProduksi();
             jTextField4.setText(String.format(LOCALE_ID, "%,.0f", totalProduksi));
 
-            // Nilai Jasa Ekosistem sekarang diisi manual oleh pengguna sendiri
             String nilaiJasaTeks   = jTextField5.getText().trim();
             String nilaiJasaTampil = nilaiJasaTeks.isEmpty()
                 ? "(belum diisi)"
                 : "Rp " + nilaiJasaTeks;
 
-            // Dialog menampilkan rincian sesuai kegiatan yang dipilih
+            // Pesan menampilkan rincian sesuai kegiatan yang dipilih
             JOptionPane.showMessageDialog(this,
                 "╔══════════════════════════════════════╗\n" +
-                "    HASIL PROSES — TABEL 3 JURNAL \n" +
+                "           HASIL PROSES \n" +
                 "╚══════════════════════════════════════╝\n\n" +
                 "Desa             : " + desa      + "\n" +
                 "Jenis Jasa       : " + jenisJasa + "\n" +
@@ -409,11 +397,13 @@ public class FrameMangrove extends javax.swing.JFrame {
             }
             String nama        = jComboBox1.getSelectedItem().toString();
             String kegiatan    = cmbBentukKegiatan.getSelectedItem().toString();
-            // Jenis Jasa dipilih manual oleh pengguna
+            
+            // Memilih jenis Jasa
             String jenisJasa   = cmbJenisJasa.getSelectedItem().toString();
             double tradisional = Double.parseDouble(jTextField2.getText().trim());
             double intensif    = Double.parseDouble(jTextField3.getText().trim());
-            // Nilai Jasa Ekosistem diketik manual oleh pengguna
+            
+            // Mengisi Nilai Jasa Ekosistem
             double nilaiJasa   = Double.parseDouble(jTextField5.getText().trim());
 
             simpanDataDesa(nama, tradisional, intensif, kegiatan, jenisJasa, nilaiJasa);

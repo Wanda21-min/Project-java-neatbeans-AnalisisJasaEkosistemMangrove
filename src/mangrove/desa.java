@@ -4,17 +4,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 import javax.swing.JOptionPane;
 
-/*
- * CLASS DESA — Superclass (class induk)
- * Ditambahkan dua ArrayList baru untuk menampung
- * kolom Jenis Jasa dan Bentuk Kegiatan dari Tabel 3 jurnal.
- *   - dataJenisJasa      : menyimpan jenis jasa per baris tabel
- *   - dataBentukKegiatan : menyimpan bentuk kegiatan per baris tabel
- */
+/* CLASS DESA — Superclass (class induk) */
 public class desa {
 
-    // Locale eksplisit agar format Rupiah (titik ribuan,
-    // koma desimal) selalu konsisten di komputer manapun.
+    // Locale eksplisit agar format Rupiah
     protected static final Locale LOCALE_ID = new Locale("in", "ID");
 
     // ===== ATRIBUT PRIVATE =====
@@ -28,30 +21,18 @@ public class desa {
     private ArrayList<Double> dataIntensif;
     private ArrayList<Double> dataTotalProduksi;
     private ArrayList<Double> dataNilaiJasa;
-    // [BARU] ArrayList untuk Jenis Jasa dan Bentuk Kegiatan (Tabel 3)
     private ArrayList<String> dataJenisJasa;
     private ArrayList<String> dataBentukKegiatan;
 
-    // ===== CONSTRUCTOR 1 — tanpa parameter =====
+    // ===== CONSTRUCTOR tanpa parameter =====
     public desa() {
         dataDesa           = new ArrayList<>();
         dataTradisional    = new ArrayList<>();
         dataIntensif       = new ArrayList<>();
         dataTotalProduksi  = new ArrayList<>();
         dataNilaiJasa      = new ArrayList<>();
-        // [BARU] Inisialisasi ArrayList Jenis Jasa & Bentuk Kegiatan
         dataJenisJasa      = new ArrayList<>();
         dataBentukKegiatan = new ArrayList<>();
-    }
-
-    // ===== CONSTRUCTOR 2 — dengan parameter (overloading) =====
-    // Dengan memanggil this() di awal, semua ArrayList
-    // ikut diinisialisasi seperti pada constructor tanpa parameter.
-    public desa(String namaDesa, double tambakTradisional, double tambakIntensif) {
-        this();
-        this.namaDesa          = namaDesa;
-        this.tambakTradisional = tambakTradisional;
-        this.tambakIntensif    = tambakIntensif;
     }
 
     // ===== PENCARIAN INDEX =====
@@ -64,12 +45,12 @@ public class desa {
         int i = getIndexData(desa);
         if (i >= 0) {
             String info =
-                "Desa              : " + dataDesa.get(i)                                      + "\n" +
-                "Jenis Jasa        : " + dataJenisJasa.get(i)                                 + "\n" +
-                "Bentuk Kegiatan   : " + dataBentukKegiatan.get(i)                            + "\n" +
-                "Tambak Tradisional: Rp " + String.format(LOCALE_ID, "%,.0f", dataTradisional.get(i))    + "\n" +
-                "Tambak Intensif   : Rp " + String.format(LOCALE_ID, "%,.0f", dataIntensif.get(i))       + "\n" +
-                "Total Produksi    : Rp " + String.format(LOCALE_ID, "%,.0f", dataTotalProduksi.get(i))  + "\n" +
+                "Desa              : " + dataDesa.get(i)+ "\n" +
+                "Jenis Jasa        : " + dataJenisJasa.get(i)+ "\n" +
+                "Bentuk Kegiatan   : " + dataBentukKegiatan.get(i)+ "\n" +
+                "Tambak Tradisional: Rp " + String.format(LOCALE_ID, "%,.0f", dataTradisional.get(i))+ "\n" +
+                "Tambak Intensif   : Rp " + String.format(LOCALE_ID, "%,.0f", dataIntensif.get(i))+ "\n" +
+                "Total Produksi    : Rp " + String.format(LOCALE_ID, "%,.0f", dataTotalProduksi.get(i))+ "\n" +
                 "Nilai Jasa        : Rp " + String.format(LOCALE_ID, "%,.2f", dataNilaiJasa.get(i));
             JOptionPane.showMessageDialog(null, info, "Detail Data Desa", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -95,7 +76,6 @@ public class desa {
             dataIntensif.remove(index);
             dataTotalProduksi.remove(index);
             dataNilaiJasa.remove(index);
-            // [BARU] Hapus juga Jenis Jasa & Bentuk Kegiatan
             dataJenisJasa.remove(index);
             dataBentukKegiatan.remove(index);
         }
@@ -107,7 +87,6 @@ public class desa {
     public ArrayList<Double> arrayIntensif()         { return dataIntensif; }
     public ArrayList<Double> arrayTotalProduksi()    { return dataTotalProduksi; }
     public ArrayList<Double> arrayNilaiJasa()        { return dataNilaiJasa; }
-    // [BARU] Getter ArrayList Jenis Jasa & Bentuk Kegiatan
     public ArrayList<String> arrayJenisJasa()        { return dataJenisJasa; }
     public ArrayList<String> arrayBentukKegiatan()   { return dataBentukKegiatan; }
 
